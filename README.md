@@ -10,7 +10,7 @@ This is a simple application that can render objects using the Ray Tracing metho
 - [Vulkan SDK](https://vulkan.lunarg.com/sdk/home#windows)
 
 ## Getting Started
-First, you need to recursively clone this repository: 'git clone --recursive https://github.com/rostikro/RayTracing'. Next, you need to run the `scripts/Setup.bat` file to generate the required project files. Visual Studio 2022 is recommended.
+First, you need to clone this repository: 'git clone https://github.com/rostikro/RayTracing'. Next, you need to run the `scripts/Setup.bat` file to generate the required project files. Visual Studio 2022 is recommended.
 
 ## Features
 - Physically based rendering with materials
