@@ -1,6 +1,8 @@
 #include "Renderer.h"
 
 #include <iostream>
+#include <execution>
+
 #include <Walnut/Random.h>
 
 namespace Utils
@@ -39,6 +41,13 @@ void Renderer::Resize(uint32_t width, uint32_t height)
 
 	delete[] m_AccumulationData;
 	m_AccumulationData = new glm::vec4[width * height];
+
+	m_ImageHorizontalIt.resize(width);
+	for (uint32_t i = 0; i < width; i++)
+		m_ImageHorizontalIt[i] = i;
+	m_ImageVerticalIt.resize(height);
+	for (uint32_t i = 0; i < height; i++)
+		m_ImageVerticalIt[i] = i;
 }
 
 void Renderer::Render(const Scene& scene, const Camera& camera)
@@ -49,18 +58,46 @@ void Renderer::Render(const Scene& scene, const Camera& camera)
 	if (m_FrameIndex == 1)
 		memset(m_AccumulationData, 0, m_FinalImage->GetHeight() * m_FinalImage->GetWidth() * sizeof(glm::vec4));
 
-	for (uint32_t y = 0; y < m_FinalImage->GetHeight(); y++)
+	/*if (m_FrameIndex > 20)
+		return;*/
+	if (m_Settings.Multithreding)
 	{
-		for (uint32_t x = 0; x < m_FinalImage->GetWidth(); x++)
+		std::for_each(std::execution::par, m_ImageVerticalIt.begin(), m_ImageVerticalIt.end(),
+			[this](uint32_t y)
+			{
+				/*std::for_each(std::execution::par, m_ImageHorizontalIt.begin(), m_ImageHorizontalIt.end(),
+				[this, y](uint32_t x)
+					{
+
+					});*/
+				for (uint32_t x = 0; x < m_FinalImage->GetWidth(); x++)
+				{
+					glm::vec4 color = RenderPixel(x, y);
+					m_AccumulationData[y * m_FinalImage->GetWidth() + x] += color;
+
+					glm::vec4 accumulatedColor = m_AccumulationData[y * m_FinalImage->GetWidth() + x];
+					accumulatedColor /= (float)m_FrameIndex;
+
+					accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
+					m_ImageData[y * m_FinalImage->GetWidth() + x] = Utils::ConvertToRGBA(accumulatedColor);
+				}
+			});
+	}
+	else
+	{
+		for (uint32_t y = 0; y < m_FinalImage->GetHeight(); y++)
 		{
-			glm::vec4 color = RenderPixel(x, y);
-			m_AccumulationData[y * m_FinalImage->GetWidth() + x] += color;
+			for (uint32_t x = 0; x < m_FinalImage->GetWidth(); x++)
+			{
+				glm::vec4 color = RenderPixel(x, y);
+				m_AccumulationData[y * m_FinalImage->GetWidth() + x] += color;
 
-			glm::vec4 accumulatedColor = m_AccumulationData[y * m_FinalImage->GetWidth() + x];
-			accumulatedColor /= (float)m_FrameIndex;
+				glm::vec4 accumulatedColor = m_AccumulationData[y * m_FinalImage->GetWidth() + x];
+				accumulatedColor /= (float)m_FrameIndex;
 
-			accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
-			m_ImageData[y * m_FinalImage->GetWidth() + x] = Utils::ConvertToRGBA(accumulatedColor);
+				accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
+				m_ImageData[y * m_FinalImage->GetWidth() + x] = Utils::ConvertToRGBA(accumulatedColor);
+			}
 		}
 	}
 
@@ -81,7 +118,7 @@ glm::vec4 Renderer::RenderPixel(uint32_t x, uint32_t y)
 	glm::vec3 color(0.0f, 0.0f, 0.0f);
 	float multiplier = 1.0f;
 
-	const int bounces = 5;
+	int bounces = 5;
 
 	for (int i = 0; i < bounces; i++)
 	{

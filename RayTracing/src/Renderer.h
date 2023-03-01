@@ -15,6 +15,7 @@ public:
 	struct Settings
 	{
 		bool Accumulate = true;
+		bool Multithreding = false;
 	};
 
 public:
@@ -50,6 +51,9 @@ private:
 
 	uint32_t* m_ImageData = nullptr;
 	glm::vec4* m_AccumulationData = nullptr;
+
+	// For multi threading function (for_each)
+	std::vector<uint32_t> m_ImageHorizontalIt, m_ImageVerticalIt;
 
 	uint32_t m_FrameIndex = 1;
 };

@@ -70,6 +70,7 @@ public:
 		ImGui::Text("Viewport size: %dx%d", m_ViewportWidth, m_ViewportHeight );
 
 		ImGui::Checkbox("Accumulate", &m_Renderer.GetSettings().Accumulate);
+		ImGui::Checkbox("Multithreding", &m_Renderer.GetSettings().Multithreding);
 
 		if (ImGui::Button("Reset"))
 			m_Renderer.ResetFrameIndex();
