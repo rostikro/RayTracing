@@ -1,6 +1,12 @@
-# Walnut App Template
+# C++ Ray Tracer
 
-This is a simple app template for [Walnut](https://github.com/TheCherno/Walnut) - unlike the example within the Walnut repository, this keeps Walnut as an external submodule and is much more sensible for actually building applications. See the [Walnut](https://github.com/TheCherno/Walnut) repository for more details.
+This is a simple application that can render objects using the Ray Tracing method in real time. At the moment, all calculations are performed on the CPU, but they will be transferred to the GPU in the future.
+
+## Requirements
+- [Vulkan SDK](https://vulkan.lunarg.com/sdk/home#windows)
 
 ## Getting Started
-Once you've cloned, you can customize the `premake5.lua` and `WalnutApp/premake5.lua` files to your liking (eg. change the name from "WalnutApp" to something else).  Once you're happy, run `scripts/Setup.bat` to generate Visual Studio 2022 solution/project files. Your app is located in the `WalnutApp/` directory, which some basic example code to get you going in `WalnutApp/src/WalnutApp.cpp`. I recommend modifying that WalnutApp project to create your own application, as everything should be setup and ready to go.
+First, you need to clone this repository. Next, you need to run the `scripts/Setup.bat` file to generate the required project files. Visual Studio 2022 is recommended.
+
+## Gallery
+![img1](https://github.com/rostikro/RayTracing/blob/master/images/img1.jpg)
